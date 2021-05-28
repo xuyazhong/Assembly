@@ -1,6 +1,10 @@
-     1 00000000 B80500                  mov ax, 5
-     2 00000003 BB0A00                  mov bx, 10
-     3 00000006 01D8                    add ax, bx
-     4                                  
-     5 00000008 00<rept>                times 502 db 0
-     6 000001FE AA55                    dw 0x55aa
+     1                                  start:
+     2 00000000 B8FFFF                  mov ax, 65535
+     3 00000003 31D2                    xor dx, dx
+     4 00000005 BB0A00                  mov bx, 10
+     5                                  
+     6 00000008 F7F3                    div bx
+     7                                  
+     8 0000000A 00<rept>                times (510-($-$$)) db 0
+     9                                  
+    10 000001FE AA55                    dw 0x55aa

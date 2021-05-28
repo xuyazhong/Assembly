@@ -1,0 +1,79 @@
+start:
+mov ax, 65535
+xor dx, dx
+mov bx, 10
+
+div bx
+
+add dl, 0x30
+mov [0x7c00+datas+0x00], dl
+
+xor dx, dx
+div bx
+
+add dl, 0x30
+mov [0x7c00+datas+0x01], dl
+
+xor dx, dx
+div bx
+
+add dl, 0x30
+mov [0x7c00+datas+0x02], dl
+
+xor dx, dx
+div bx
+
+add dl, 0x30
+mov [0x7c00+datas+0x03], dl
+
+xor dx, dx
+div bx
+
+add dl, 0x30
+mov [0x7c00+datas+0x04], dl
+
+mov ax, 0xb800
+mov es, ax
+
+mov byte [es:0x00],'L'
+mov byte [es:0x01],0x07
+mov byte [es:0x02],'a'
+mov byte [es:0x03],0x07
+mov byte [es:0x04],'b'
+mov byte [es:0x05],0x07
+mov byte [es:0x06],'e'
+mov byte [es:0x07],0x07
+mov byte [es:0x08],'l'
+mov byte [es:0x09],0x07
+mov byte [es:0x0a],' '
+mov byte [es:0x0b],0x07
+
+mov al, [0x7c00+datas+0x04]
+mov byte [es:0x0c], al
+mov byte [es:0x0d], 0x07
+
+mov al, [0x7c00+datas+0x03]
+mov byte [es:0x0e], al
+mov byte [es:0x0f], 0x07
+
+mov al, [0x7c00+datas+0x02]
+mov byte [es:0x10], al
+mov byte [es:0x11], 0x07
+
+mov al, [0x7c00+datas+0x01]
+mov byte [es:0x12], al
+mov byte [es:0x13], 0x07
+
+mov al, [0x7c00+datas+0x00]
+mov byte [es:0x14], al
+mov byte [es:0x15], 0x07
+
+datas db 0, 0, 0, 0, 0
+
+again: 
+    jmp short again
+
+times (510-($-$$)) db 0
+
+db 0x55
+db 0xaa
