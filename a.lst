@@ -1,54 +1,67 @@
-     1 00000000 EB11                    jmp start
+     1 00000000 EB1A                    jmp start
      2                                  
-     3 00000002 4C076107620765076C-     labs: db 'L', 0x07, 'a', 0x07, 'b', 0x07, 'e', 0x07, 'l', 0x07, ' ', 0x07, 'b', '0x07'
-     3 0000000B 0720076230783037   
+     3 00000002 616263646566676869-     message: db 'abcdefghijklmnopqrstuvwxyz'
+     3 0000000B 6A6B6C6D6E6F707172-
+     3 00000014 737475767778797A   
      4                                  
      5                                  start:
      6                                  
-     7 00000013 B800B8                  mov ax, 0xb800
-     8 00000016 8EC0                    mov es, ax
-     9 00000018 BF0000                  mov di, 0
-    10                                  
-    11 0000001B B8C007                  mov ax, 0x07c0
-    12 0000001E 8ED8                    mov ds, ax
-    13 00000020 BE[0200]                mov si, labs
-    14                                  
-    15 00000023 B90C00                  mov cx, 0xc
-    16                                  
-    17                                  ; std
-    18 00000026 FC                      cld
-    19                                  
-    20 00000027 F3A4                    rep movsb
-    21                                  
-    22 00000029 B8FFFF                  mov ax, 65535
-    23 0000002C BE0A00                  mov si, 10
-    24 0000002F BB[5900]                mov bx, datas
-    25 00000032 B90500                  mov cx, 5
-    26                                  
-    27                                  func:
-    28 00000035 31D2                        xor dx, dx
-    29 00000037 F7F6                        div si
-    30 00000039 80C230                      add dl, 0x30
-    31 0000003C 8817                        mov [bx], dl
-    32 0000003E 43                          inc bx
-    33 0000003F E2F4                        loop func
-    34                                  
-    35 00000041 B90500                  mov cx, 5
-    36 00000044 BB[5900]                mov bx, datas
-    37 00000047 01CB                    add bx, cx
-    38                                  show:
-    39 00000049 4B                          dec bx
-    40 0000004A 8A07                        mov al, [bx]
-    41 0000004C 268805                      mov byte [es: di], al
-    42 0000004F 47                          inc di
-    43 00000050 26C60507                    mov byte [es: di], 0x07
-    44 00000054 47                          inc di
-    45 00000055 E2F2                        loop show
+     7 0000001C B800B8                      mov ax, 0xb800
+     8 0000001F 8EC0                        mov es, ax
+     9 00000021 B91A00                      mov cx, start-message
+    10 00000024 BE0000                      mov si, 0
+    11                                  
+    12 00000027 B8C007                      mov ax, 0x7c0
+    13 0000002A 8ED8                        mov ds, ax
+    14 0000002C BF[0200]                    mov di, message
+    15                                  
+    16                                  showdb:
+    17 0000002F 3E8A05                      mov al, [ds: di]
+    18 00000032 47                          inc di
+    19 00000033 268804                      mov [es: si], al
+    20 00000036 46                          inc si
+    21 00000037 26C60407                    mov byte [es: si], 0x07
+    22 0000003B 46                          inc si
+    23 0000003C E2F1                        loop showdb
+    24                                  
+    25                                  ;交换
+    26 0000003E B8C007                  mov ax, 0x7c0
+    27 00000041 8ED8                    mov ds, ax
+    28                                  ; mov ax, cs
+    29                                  ; mov ds, ax
+    30 00000043 BB[0200]                mov bx, message
+    31 00000046 BF[1B00]                mov di, start-1
+    32                                  
+    33                                  move:
+    34 00000049 8A07                        mov al, [bx]
+    35 0000004B 8A25                        mov ah, [di]
+    36 0000004D 8805                        mov [di], al
+    37 0000004F 8827                        mov [bx], ah
+    38 00000051 83C301                      add bx, 1
+    39 00000054 83EF01                      sub di, 1
+    40 00000057 39FB                        cmp bx, di
+    41 00000059 7CEE                        jl move
+    42                                  
+    43 0000005B B8C007                  mov ax, 0x07c0
+    44 0000005E 8ED8                    mov ds, ax
+    45 00000060 BF[0200]                mov di, message
     46                                  
-    47 00000057 EBFE                    jmp $
-    48                                  
-    49 00000059 0000000000              datas db 0, 0, 0, 0, 0
-    50                                  
-    51 0000005E 00<rept>                times (510-($-$$)) db 0
-    52                                  
-    53 000001FE 55AA                    db 0x55, 0xaa
+    47 00000063 B800B8                  mov ax, 0xb800
+    48 00000066 8EC0                    mov es, ax
+    49 00000068 BEA000                  mov si, 0xa0
+    50 0000006B B91A00                  mov cx, start-message
+    51                                  
+    52                                  showdb2:
+    53 0000006E 3E8A05                      mov al, [ds: di]
+    54 00000071 47                          inc di
+    55 00000072 268804                      mov [es: si], al
+    56 00000075 46                          inc si
+    57 00000076 26C60407                    mov byte [es: si], 0x07
+    58 0000007A 46                          inc si
+    59 0000007B E2F1                        loop showdb2
+    60                                  
+    61 0000007D EBFE                    jmp $
+    62                                  
+    63 0000007F 00<rept>                times (510-($-$$)) db 0
+    64                                  
+    65 000001FE 55AA                    db 0x55, 0xaa
