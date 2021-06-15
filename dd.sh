@@ -1,2 +1,2 @@
 #/bin/bash
-dd if=a.bin of=floppy.img bs=512 count=1 conv=notrunc
+dd if=a.bin of=disk.img bs=512 count=1 conv=notrunc
