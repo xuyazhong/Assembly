@@ -1,0 +1,75 @@
+     1 00000000 EB1A                    jmp start
+     2                                  
+     3 00000002 616263646566676869-     message: db 'abcdefghijklmnopqrstuvwxyz'
+     3 0000000B 6A6B6C6D6E6F707172-
+     3 00000014 737475767778797A   
+     4                                  
+     5                                  start:
+     6                                  
+     7 0000001C B800B8                      mov ax, 0xb800
+     8 0000001F 8EC0                        mov es, ax
+     9 00000021 B91A00                      mov cx, start-message
+    10 00000024 BE0000                      mov si, 0
+    11                                  
+    12 00000027 B8C007                      mov ax, 0x7c0
+    13 0000002A 8ED8                        mov ds, ax
+    14 0000002C BF[0200]                    mov di, message
+    15                                  
+    16                                  showdb:
+    17 0000002F 3E8A05                      mov al, [ds: di]
+    18 00000032 47                          inc di
+    19 00000033 268804                      mov [es: si], al
+    20 00000036 46                          inc si
+    21 00000037 26C60407                    mov byte [es: si], 0x07
+    22 0000003B 46                          inc si
+    23 0000003C E2F1                        loop showdb
+    24                                  
+    25 0000003E B80000                  mov ax, 0
+    26 00000041 8ED0                    mov ss, ax
+    27 00000043 BC0000                  mov sp, 0
+    28                                  
+    29 00000046 B8C007                  mov ax, 0x7c0
+    30 00000049 8ED8                    mov ds, ax
+    31 0000004B BF[0200]                mov di, message
+    32                                  
+    33 0000004E B91A00                  mov cx, start-message
+    34                                  
+    35                                  reverse:
+    36 00000051 3E8A05                      mov al, [ds: di]
+    37 00000054 47                          inc di
+    38 00000055 30E4                        xor ah, ah
+    39 00000057 50                          push ax
+    40 00000058 E2F7                        loop reverse    
+    41                                  
+    42 0000005A BF[0200]                mov di, message
+    43                                  popback:
+    44 0000005D 58                          pop ax
+    45 0000005E 3E8805                      mov [ds: di], al
+    46 00000061 47                          inc di
+    47 00000062 83FC00                      cmp sp, 0
+    48 00000065 75F6                        jne popback
+    49                                  
+    50                                  
+    51 00000067 B800B8                      mov ax, 0xb800
+    52 0000006A 8EC0                        mov es, ax
+    53 0000006C B91A00                      mov cx, start-message
+    54 0000006F BEA000                      mov si, 0xa0
+    55                                  
+    56 00000072 B8C007                      mov ax, 0x7c0
+    57 00000075 8ED8                        mov ds, ax
+    58 00000077 BF[0200]                    mov di, message
+    59                                  
+    60                                  showdb2:
+    61 0000007A 3E8A05                      mov al, [ds: di]
+    62 0000007D 47                          inc di
+    63 0000007E 268804                      mov [es: si], al
+    64 00000081 46                          inc si
+    65 00000082 26C60407                    mov byte [es: si], 0x07
+    66 00000086 46                          inc si
+    67 00000087 E2F1                        loop showdb2
+    68                                  
+    69 00000089 EBFE                    jmp $
+    70                                  
+    71 0000008B 00<rept>                times (510-($-$$)) db 0
+    72                                  
+    73 000001FE 55AA                    db 0x55, 0xaa

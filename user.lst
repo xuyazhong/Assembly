@@ -1,0 +1,21 @@
+     1 00000000 B800B8                  mov ax, 0xb800
+     2 00000003 8EC0                    mov es, ax
+     3 00000005 BE0000                  mov si, 0
+     4                                  
+     5 00000008 B8[2200]                mov ax, string
+     6 0000000B 8ED8                    mov ds, ax
+     7 0000000D BB0000                  mov bx, 0
+     8                                  
+     9 00000010 B90D00                  mov cx, string_end-string
+    10                                  
+    11 00000013 B470                    mov ah, 0x70
+    12                                  show:
+    13 00000015 8A07                        mov al, [bx]
+    14 00000017 268904                      mov [es: si], ax
+    15 0000001A 83C602                      add si, 2
+    16 0000001D 43                          inc bx
+    17 0000001E E2F5                        loop show
+    18 00000020 EBFE                    jmp $
+    19 00000022 75736572206D6F6465-     string db 'user mode OK.'
+    19 0000002B 204F4B2E           
+    20                                  string_end:

@@ -1,0 +1,89 @@
+{
+    "version": "2.0.0",
+    "tasks": [
+        {
+            "label": "nasm编译二进制文件",
+            "type": "shell",
+            "command": "nasm",
+            "args": [
+                // `nasm $1 -o a.bin -l a.lst`
+                "${file}",
+                // "-f",
+                // "bin",
+                "-o",
+                "${fileBasenameNoExtension}.bin",
+                "-l",
+                "${fileBasenameNoExtension}.lst",
+            ],
+            "options": {
+                "cwd": "${workspaceFolder}",
+            },
+            "group": {
+                "kind": "build",
+                "isDefault": true
+            },
+            "problemMatcher": []
+        },
+        {
+            // dd if=a.bin of=disk.img bs=512 count=1 conv=notrunc
+            "label": "mbr",
+            "type": "shell",
+            "command": "dd",
+            "args": [
+                "if=${fileBasenameNoExtension}.bin",
+                "of=disk.img",
+                "bs=512",
+                "count=1",
+                "conv=notrunc"
+            ],
+            "options": {
+                "cwd": "${workspaceFolder}",
+            },
+            "group": {
+                "kind": "build",
+                "isDefault": true
+            },
+            "problemMatcher": []
+        },
+        {
+            // dd if=a.bin of=disk.img bs=512 seek=100 count=1 conv=notrunc
+            "label": "mbr100",
+            "type": "shell",
+            "command": "dd",
+            "args": [
+                "if=${fileBasenameNoExtension}.bin",
+                "of=disk.img",
+                "bs=512",
+                "seek=128",
+                "count=1",
+                "conv=notrunc"
+            ],
+            "options": {
+                "cwd": "${workspaceFolder}",
+            },
+            "group": {
+                "kind": "build",
+                "isDefault": true
+            },
+            "problemMatcher": []
+        },
+        {
+            // bochs -f bochs.conf
+            "label": "bochs",
+            "type": "shell",
+            "command": "bochs",
+            "args": [
+                "-f",
+                "bochs.conf"
+            ],
+            "options": {
+                "cwd": "${workspaceFolder}",
+            },
+            "group": {
+                "kind": "build",
+                "isDefault": true
+            },
+            "problemMatcher": []
+        }
+    ]
+}

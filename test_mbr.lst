@@ -1,0 +1,82 @@
+     1                                  ; read_disk_start equ 100 
+     2                                  
+     3                                  ; mov cx, 0xa000
+     4                                  ; mov ss, cx
+     5                                  ; mov sp, 0
+     6 00000000 B8C007                  mov ax, 0x07c0
+     7 00000003 8ED8                    mov ds, ax
+     8 00000005 A1[5E00]                mov ax, [data]
+     9 00000008 8B16[6000]              mov dx, [data+0x2]
+    10 0000000C BB1000                  mov bx, 16
+    11 0000000F F7F3                    div bx
+    12                                  
+    13 00000011 8EC0                    mov es, ax
+    14 00000013 89D3                    mov bx, dx
+    15 00000015 E80E00                  call read_hard_disk_0
+    16                                  
+    17 00000018 B90002                  mov cx, 512
+    18 0000001B E82700                  call show
+    19                                  
+    20 0000001E BE[8300]                mov si, string_end
+    21 00000021 E82C00                  call putc
+    22                                  
+    23 00000024 EBFE                    jmp $
+    24                                  
+    25                                  read_hard_disk_0:
+    26                                  
+    27                                      ; push ax
+    28                                      ; push cx
+    29                                      ; push dx
+    30                                  
+    31 00000026 B001                        mov al, 1		;读取/写入的扇区数目
+    32 00000028 B402                        mov ah, 0x2		;int 13h 的功能号（常用的：2 表示读扇区；3 表示写扇区）
+    33 0000002A B500                        mov ch, 0		;磁道号
+    34 0000002C B125                        mov cl, 37		;（起始）扇区号
+    35 0000002E B601                        mov dh, 1		;磁头号（对于软盘来说就是面号，因为一个面用一个磁头来读写）
+    36 00000030 B280                        mov dl, 0x80		;驱动器号：	软驱从 0 开始：  0，软驱 A ； 1，软驱 B。
+    37                                                                  ; 硬盘从 80h 开始：  80h，硬盘 C ； 81h，硬盘 D 。
+    38 00000032 CD13                        int 0x13
+    39 00000034 7308                        jnc loadSuccess
+    40                                  
+    41 00000036 BE[6700]                    mov si, string_error
+    42 00000039 E81400                      call putc
+    43 0000003C EB06                        jmp load_end
+    44                                  
+    45                                  loadSuccess:
+    46 0000003E BE[7400]                    mov si, string_success
+    47 00000041 E80C00                      call putc
+    48                                  
+    49                                  load_end:
+    50                                      ; pop dx
+    51                                      ; pop cx
+    52                                      ; pop ax
+    53 00000044 C3                          ret
+    54                                  
+    55                                  show:
+    56 00000045 B40E                        mov ah, 0x0e
+    57 00000047 268A07                      mov al, [es: bx]
+    58 0000004A CD10                        int 0x10
+    59 0000004C 43                          inc bx
+    60 0000004D E2F6                        loop show
+    61 0000004F C3                          ret
+    62                                  
+    63                                  putc:
+    64 00000050 B40E                        mov ah, 0x0e
+    65 00000052 8A04                        mov al, [si]
+    66 00000054 84C0                        test al, al
+    67 00000056 7405                        je return
+    68 00000058 CD10                        int 0x10
+    69 0000005A 46                          inc si
+    70 0000005B EBF3                        jmp putc
+    71                                  return:
+    72 0000005D C3                          ret
+    73 0000005E 00000100                data dd 0x10000             ;用户程序被加载的物理起始地址
+    74 00000062 6F6B0D0A00              string_ok: db 'ok',0x0d,0x0a, 0
+    75 00000067 72656164206572726F-     string_error: db 'read error', 0x0d, 0x0a, 0
+    75 00000070 720D0A00           
+    76 00000074 726561642073756363-     string_success: db 'read success', 0x0d, 0x0a, 0
+    76 0000007D 6573730D0A00       
+    77 00000083 70726F677265737320-     string_end: db 'progress end', 0x0d, 0x0a, 0
+    77 0000008C 656E640D0A00       
+    78 00000092 00<rept>                times 510-($-$$) db 0
+    79 000001FE 55AA                                     db 0x55,0xaa

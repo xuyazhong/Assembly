@@ -1,0 +1,52 @@
+     1                                  start:
+     2 00000000 B8C007                  mov ax, 0x7c0
+     3 00000003 8ED8                    mov ds, ax
+     4 00000005 BB[2800]                mov bx, string
+     5                                  
+     6 00000008 B99900                  mov cx, string_end - string
+     7                                  
+     8 0000000B B800B8                  mov ax, 0xb800
+     9 0000000E 8EC0                    mov es, ax
+    10 00000010 BE0000                  mov si, 0
+    11                                  
+    12                                  putc:
+    13 00000013 B40E                        mov ah, 0x0e
+    14 00000015 8A07                        mov al, [bx]
+    15 00000017 CD10                        int 0x10
+    16 00000019 43                          inc bx
+    17 0000001A E2F7                        loop putc
+    18                                  
+    19                                  inputc:
+    20 0000001C B400                        mov ah, 0x0
+    21 0000001E CD16                        int 0x16
+    22                                  
+    23 00000020 B40E                        mov ah, 0x0e
+    24 00000022 CD10                        int 0x10
+    25                                  
+    26 00000024 EBF6                        jmp inputc
+    27                                  
+    28 00000026 EBFE                        jmp $
+    29                                  
+    30 00000028 68656C6C6F2C207468-     string  db 'hello, this is test int function', 0x0d, 0x0a
+    30 00000031 697320697320746573-
+    30 0000003A 7420696E742066756E-
+    30 00000043 6374696F6E0D0A     
+    31 0000004A 48656C6C6F2C206672-             db 'Hello, friend!',0x0d,0x0a
+    31 00000053 69656E64210D0A     
+    32 0000005A 546869732073696D70-             db 'This simple procedure used to demonstrate '
+    32 00000063 6C652070726F636564-
+    32 0000006C 757265207573656420-
+    32 00000075 746F2064656D6F6E73-
+    32 0000007E 747261746520       
+    33 00000084 7468652042494F5320-             db 'the BIOS interrupt.',0x0d,0x0a
+    33 0000008D 696E74657272757074-
+    33 00000096 2E0D0A             
+    34 00000099 506C65617365207072-             db 'Please press the keys on the keyboard ->'
+    34 000000A2 65737320746865206B-
+    34 000000AB 657973206F6E207468-
+    34 000000B4 65206B6579626F6172-
+    34 000000BD 64202D3E           
+    35                                  string_end:
+    36                                  
+    37 000000C1 00<rept>                times 510-($-$$) db 0
+    38 000001FE 55AA                                      db 0x55,0xaa

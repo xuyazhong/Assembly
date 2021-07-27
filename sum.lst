@@ -1,0 +1,65 @@
+     1 00000000 EB18                    jmp start
+     2                                  
+     3 00000002 312B322B332B342B2E-     message: db '1+2+3+4+.....+98+99+100='
+     3 0000000B 2E2E2E2E2B39382B39-
+     3 00000014 392B3130303D       
+     4                                  
+     5                                  start:
+     6                                  
+     7 0000001A B91800                  mov cx, start-message
+     8                                  
+     9 0000001D B8C007                  mov ax, 0x07c0
+    10 00000020 8ED8                    mov ds, ax
+    11 00000022 BE[0200]                mov si, message
+    12                                  
+    13 00000025 B800B8                  mov ax, 0xb800
+    14 00000028 8EC0                    mov es, ax
+    15 0000002A BF0000                  mov di, 0
+    16                                  
+    17                                  show:
+    18 0000002D 3E8A14                      mov dl, [ds: si]
+    19 00000030 268815                      mov [es: di], dl
+    20 00000033 46                          inc si
+    21 00000034 47                          inc di
+    22 00000035 26C60507                    mov byte [es: di], 0x07
+    23 00000039 47                          inc di
+    24 0000003A E2F1                        loop show
+    25                                  
+    26 0000003C B96400                  mov cx, 100
+    27 0000003F B80000                  mov ax, 0
+    28                                  sum:
+    29 00000042 01C8                        add ax, cx
+    30 00000044 E2FC                        loop sum
+    31                                  
+    32 00000046 B9C007                  mov cx, 0x07c0
+    33 00000049 8ED1                    mov ss, cx
+    34 0000004B BC0000                  mov sp, 0
+    35                                  
+    36 0000004E BB0A00                  mov bx, 10
+    37 00000051 B90000                  mov cx, 0
+    38                                  
+    39                                  subdiv:
+    40 00000054 31D2                        xor dx, dx
+    41 00000056 F7F3                        div bx
+    42 00000058 80C230                      add dl, 0x30
+    43 0000005B 52                          push dx
+    44 0000005C 41                          inc cx
+    45 0000005D 83F800                      cmp ax, 0
+    46 00000060 75F2                        jne subdiv
+    47                                  ;ds: si
+    48                                  ;es: di
+    49                                  
+    50                                  shownumber:
+    51 00000062 5A                          pop dx
+    52 00000063 268815                      mov [es: di], dl
+    53 00000066 47                          inc di
+    54 00000067 26C60507                    mov byte [es: di], 0x07
+    55 0000006B 47                          inc di
+    56 0000006C 83FC00                      cmp sp, 0
+    57 0000006F 75F1                        jne shownumber
+    58                                  
+    59 00000071 EBFE                    jmp $
+    60                                  
+    61 00000073 00<rept>                times (510-($-$$)) db 0
+    62                                  
+    63 000001FE 55AA                    db 0x55, 0xaa
