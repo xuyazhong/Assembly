@@ -54,7 +54,7 @@
                 "if=${fileBasenameNoExtension}.bin",
                 "of=disk.img",
                 "bs=512",
-                "seek=128",
+                "seek=100",
                 "count=1",
                 "conv=notrunc"
             ],

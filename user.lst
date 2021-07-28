@@ -1,21 +1,43 @@
-     1 00000000 B800B8                  mov ax, 0xb800
-     2 00000003 8EC0                    mov es, ax
-     3 00000005 BE0000                  mov si, 0
-     4                                  
-     5 00000008 B8[2200]                mov ax, string
-     6 0000000B 8ED8                    mov ds, ax
-     7 0000000D BB0000                  mov bx, 0
-     8                                  
-     9 00000010 B90D00                  mov cx, string_end-string
-    10                                  
-    11 00000013 B470                    mov ah, 0x70
-    12                                  show:
-    13 00000015 8A07                        mov al, [bx]
-    14 00000017 268904                      mov [es: si], ax
-    15 0000001A 83C602                      add si, 2
-    16 0000001D 43                          inc bx
-    17 0000001E E2F5                        loop show
-    18 00000020 EBFE                    jmp $
-    19 00000022 75736572206D6F6465-     string db 'user mode OK.'
-    19 0000002B 204F4B2E           
-    20                                  string_end:
+     1                                  ; SECTION header vstart=0                     ;定义用户程序头部段 
+     2                                  ;     program_length  dd program_end          ;程序总长度[0x00]
+     3                                      
+     4                                  ;     ;用户程序入口点
+     5                                  ;     code_entry      dw start                ;偏移地址[0x04]
+     6                                  ;                     dd section.code.start ;段地址[0x06] 
+     7                                      
+     8                                  ;     realloc_tbl_len dw (header_end-code_1_segment)/4
+     9                                  ;                                             ;段重定位表项个数[0x0a]
+    10                                      
+    11                                  ;     ;段重定位表           
+    12                                  ;     code_1_segment  dd section.code.start ;[0x0c]
+    13                                  ;     ; code_2_segment  dd section.code_2.start ;[0x10]
+    14                                  ;     ; data_1_segment  dd section.data_1.start ;[0x14]
+    15                                  ;     ; data_2_segment  dd section.data_2.start ;[0x18]
+    16                                  ;     ; stack_segment   dd section.stack.start  ;[0x1c]
+    17                                      
+    18                                  ;     header_end:   
+    19                                  
+    20                                  ; SECTION code vstart=0 align=16                     ;定义用户程序头部段 
+    21                                  ; start:                                             ;程序入口点
+    22 00000000 B800B8                  mov ax, 0xb800
+    23 00000003 8EC0                    mov es, ax
+    24 00000005 BE0000                  mov si, 0
+    25                                  
+    26 00000008 B070                    mov al, 0x70
+    27                                  
+    28 0000000A 26C6046F                mov byte [es: si], 'o'
+    29 0000000E 46                      inc si
+    30 0000000F 268804                  mov [es: si], al
+    31 00000012 46                      inc si
+    32 00000013 26C6046B                mov byte [es: si], 'k'
+    33 00000017 46                      inc si
+    34 00000018 268804                  mov [es: si], al
+    35 0000001B 46                      inc si
+    36 0000001C 26C6042E                mov byte [es: si], '.'
+    37 00000020 46                      inc si
+    38 00000021 268804                  mov [es: si], al
+    39                                  
+    40 00000024 EBFE                    jmp $
+    41                                  
+    42                                  ; SECTION trail align=16
+    43                                  ; program_end:
